@@ -1,104 +1,220 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Animation variants
+const ANIMATIONS = {
+  overlay: {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, transition: { duration: 0.3 } },
+  },
+  menuContainer: {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        staggerChildren: 0.05,
+        staggerDirection: -1,
+      },
+    },
+  },
+  menuItem: {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    exit: { opacity: 0, y: 20, transition: { duration: 0.3 } },
+  },
+};
+
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   // Close on Esc
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    const onKey = (e) => e.key === "Escape" && setIsOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   // Lock body scroll when open
   useEffect(() => {
-    document.documentElement.classList.toggle("overflow-hidden", open);
-    return () => document.documentElement.classList.remove("overflow-hidden");
-  }, [open]);
+    document.documentElement.classList.toggle("overflow-hidden", isOpen);
+    return () =>
+      document.documentElement.classList.remove("overflow-hidden");
+  }, [isOpen]);
 
-  // Framer variants
-  const drawer = {
-    hidden: { x: "-100%" },
-    visible: { x: 0, transition: { type: "tween", duration: 0.28 } },
-    exit: { x: "-100%", transition: { type: "tween", duration: 0.24 } },
-  };
-  const list = {
-    hidden: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
-    visible: { transition: { staggerChildren: 0.06 } },
-  };
-  const item = {
-    hidden: { opacity: 0, x: -12 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.18 } },
-  };
+  const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <nav className="bg-blue-600 text-white">
-      <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
-        <a href="/" className="font-semibold text-lg">MyApp</a>
+    <>
+      {/* Mobile Navbar */}
+      <nav className="md:hidden fixed top-0 left-0 w-full bg-transparent z-50">
+        <div className="flex justify-between items-center h-16 px-4">
+          
+          <div className="text-blue-500 text-2xl font-bold">ML4E</div>
 
-        {/* (Optional) remove this next div if you don't want inline desktop links at all */}
-        {/* <div className="hidden xl:flex gap-6">
-          <a className="hover:text-blue-100" href="#">Home</a>
-          <a className="hover:text-blue-100" href="#">About</a>
-          <a className="hover:text-blue-100" href="#">Services</a>
-          <a className="hover:text-blue-100" href="#">Contact</a>
-        </div> */}
+          {/* Hamburger icon */}
+          <button
+            className="z-50 flex flex-col justify-center items-center w-12 h-12 rounded-full bg-blue-500/10 backdrop-blur-sm border border-blue-500/20"
+            aria-label="Toggle menu"
+            aria-expanded={isOpen}
+            onClick={toggleMenu}
+          >
+            <span
+              className={`block w-6 h-0.5 bg-blue-400 mb-1.5 transition-transform ${
+                isOpen ? "transform rotate-45 translate-y-2" : ""
+              }`}
+            ></span>
+            <span
+              className={`block w-6 h-0.5 bg-blue-400 transition-opacity ${
+                isOpen ? "opacity-0" : ""
+              }`}
+            ></span>
+            <span
+              className={`block w-6 h-0.5 bg-blue-400 mt-1.5 transition-transform ${
+                isOpen ? "transform -rotate-45 -translate-y-2" : ""
+              }`}
+            ></span>
+          </button>
+        </div>
+      </nav>
 
-        {/* Hamburger: always visible on all breakpoints */}
-        <button
-          className="z-50 relative"
-          aria-label="Toggle menu"
-          aria-expanded={open}
-          aria-controls="site-drawer"
-          onClick={() => setOpen(v => !v)}
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block">
+        {/* Sidebar */}
+        <div
+          className={`fixed top-0 left-0 h-screen w-20 flex flex-col justify-between items-center py-6 z-50 
+          ${
+            isOpen
+              ? "bg-transparent"
+              : "bg-white/10 backdrop-blur-lg border-r border-white/20 shadow-xl"
+          }`}
         >
-          {open ? "✖" : "☰"}
-        </button>
-      </div>
+          {/* Logo at top */}
+          <div className="text-white text-2xl font-bold">ML4E</div>
 
-      {/* Overlay + Drawer */}
-      <AnimatePresence>
-        {open && (
-          <>
-            {/* Fade overlay */}
-            <motion.div
-              className="fixed inset-0 bg-black/50 z-40"
-              onClick={() => setOpen(false)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            />
-
-            {/* Slide-in drawer (left -> right) */}
-            <motion.aside
-              id="site-drawer"
-              className="fixed top-0 left-0 h-full w-72 max-w-[85vw] bg-blue-700 z-50 shadow-xl"
-              role="dialog"
-              aria-modal="true"
-              variants={drawer}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
+          {/* Hamburger icon  */}
+          {!isOpen && (
+            <div
+              className="flex flex-col justify-center items-center w-12 h-12 rounded-full bg-blue-500/10 backdrop-blur-sm border border-blue-500/20 cursor-pointer"
+              aria-label="Toggle menu"
+              aria-expanded={isOpen}
+              onClick={toggleMenu}
             >
-              <div className="p-6">
-                <motion.nav
-                  variants={list}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-2"
+              <span className="w-6 h-0.5 bg-blue-400 mb-1.5 transition-transform"></span>
+              <span className="w-6 h-0.5 bg-blue-400 transition-opacity"></span>
+              <span className="w-6 h-0.5 bg-blue-400 mt-1.5 transition-transform"></span>
+            </div>
+          )}
+
+       
+          <div className="h-6"></div>
+        </div>
+
+        <AnimatePresence>
+          {isOpen && (
+            <>
+             
+              <motion.div
+                className="fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40"
+                variants={ANIMATIONS.overlay}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                onClick={() => setIsOpen(false)}
+              />
+
+              {/* Menu content */}
+              <motion.div
+                className="fixed inset-0 z-50 flex flex-col justify-center items-center"
+                variants={ANIMATIONS.menuContainer}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                {/* Close button */}
+                <button
+                  className="absolute top-6 right-6 text-3xl text-white z-60"
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Close menu"
                 >
-                  <motion.a variants={item} className="block py-2 hover:text-blue-200" href="#" onClick={() => setOpen(false)}>Home</motion.a>
-                  <motion.a variants={item} className="block py-2 hover:text-blue-200" href="#" onClick={() => setOpen(false)}>About</motion.a>
-                  <motion.a variants={item} className="block py-2 hover:text-blue-200" href="#" onClick={() => setOpen(false)}>Services</motion.a>
-                  <motion.a variants={item} className="block py-2 hover:text-blue-200" href="#" onClick={() => setOpen(false)}>Contact</motion.a>
-                </motion.nav>
-              </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
-    </nav>
+                  &times;
+                </button>
+
+              
+
+                {/* Menu items */}
+                <motion.div
+                  className="flex flex-col md:flex-row md:flex-wrap items-center justify-center gap-6 max-w-4xl px-4"
+                  variants={ANIMATIONS.menuContainer}
+                >
+                  {[
+                    "Home",
+                    "Events",
+                    "Projects",
+                    "Team",
+                    "Resources",
+                    "Contact",
+                  ].map((item) => (
+                    <motion.a
+                      key={item}
+                      href={`#${item.toLowerCase()}`}
+                      variants={ANIMATIONS.menuItem}
+                      className="text-xl md:text-2xl text-white hover:text-blue-300 transition-colors cursor-pointer py-2 px-6 rounded-lg hover:bg-white/5"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {item}
+                    </motion.a>
+                  ))}
+                </motion.div>
+
+                {/* Social links */}
+                {/* <motion.div
+                  className="absolute bottom-10 flex gap-6 text-2xl text-gray-400"
+                  variants={ANIMATIONS.menuContainer}
+                >
+                  <motion.a
+                    variants={ANIMATIONS.menuItem}
+                    href="#"
+                    className="hover:text-white transition-colors"
+                  >
+                    <i className="fab fa-github"></i>
+                  </motion.a>
+                  <motion.a
+                    variants={ANIMATIONS.menuItem}
+                    href="#"
+                    className="hover:text-white transition-colors"
+                  >
+                    <i className="fab fa-linkedin"></i>
+                  </motion.a>
+                  <motion.a
+                    variants={ANIMATIONS.menuItem}
+                    href="#"
+                    className="hover:text-white transition-colors"
+                  >
+                    <i className="fab fa-twitter"></i>
+                  </motion.a>
+                  <motion.a
+                    variants={ANIMATIONS.menuItem}
+                    href="#"
+                    className="hover:text-white transition-colors"
+                  >
+                    <i className="fab fa-discord"></i>
+                  </motion.a>
+                </motion.div> */}
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
