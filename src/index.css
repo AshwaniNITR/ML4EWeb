@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "zentry";
+    src: url("/fonts/zentry-regular.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+  }
+}
+@layer utilities {
+.special-font b {
+    font-family: "Zentry";
+    font-feature-settings: "ss01" on;
+  }
+}  
