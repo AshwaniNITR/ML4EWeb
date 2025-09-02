@@ -40,7 +40,7 @@ export default function Footer() {
 
         {/* Contact cards */}
         <div className="grid gap-8 md:grid-cols-3">
-          {/* Cyborg block */}
+          {/* ML4E block */}
           <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 backdrop-blur">
             <h3 className="mb-3 text-2xl font-bold text-cyan-200 drop-shadow-[0_0_12px_rgba(0,255,255,.4)]">
               Cyborg
