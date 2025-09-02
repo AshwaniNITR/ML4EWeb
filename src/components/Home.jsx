@@ -160,7 +160,7 @@ export default function Home() {
 
   return (
     <div className="w-screen h-screen bg-black">
-      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+      <div className="absolute top-0 right-0 bottom-0 left-64 flex items-center justify-center z-10 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
