@@ -55,6 +55,7 @@ import { useFrame } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { motion } from "framer-motion";
 import { ReactTyped } from "react-typed";
+import Navbar from "./Navbar";
 
 function AnimatedNeuralNode({ position, color, size = 0.08 }) {
   const ref = useRef();
@@ -160,7 +161,8 @@ export default function Home() {
 
   return (
     <div className="w-screen h-screen bg-black">
-      <div className="absolute top-0 right-0 bottom-0 left-64 flex items-center justify-center z-10 pointer-events-none">
+      <Navbar/>
+      <div className="absolute inset-0 flex md:left-10 items-center justify-center z-10 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
